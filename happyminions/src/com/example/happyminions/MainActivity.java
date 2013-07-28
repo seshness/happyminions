@@ -1,8 +1,8 @@
 package com.example.happyminions;
 
-import java.util.ArrayList;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +15,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.apache.commons.*;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -46,23 +50,113 @@ public class MainActivity extends Activity implements OnClickListener {
         return true;
     }
     
-    /** Called when the user clicks the Send button */
-    public void sendMessage(View view) {
+   class RetreiveFeedTask extends AsyncTask<String, Void, HttpEntity> {
 
+        private Exception exception;
+        private HttpEntity entity = null;
+        protected HttpEntity doInBackground(String... urls) {
+            try {
+            	
+            	HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost("http://52xb.localtunnel.com/text");
+                System.out.println("Http instantiation not a problem ");
+                try {
+                    // Add your data
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    nameValuePairs.add(new BasicNameValuePair("text", "hello this is cool"));
+                    nameValuePairs.add(new BasicNameValuePair("end_time", "1374883200000"));
+                    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                    // Execute HTTP Post Request
+                    HttpResponse response = httpclient.execute(httppost);
+                    entity = response.getEntity();
+                    if (entity != null) {
+                    	InputStream instream = entity.getContent();
+                    	try {
+                    		// do something useful
+                    	} finally {
+                    		instream.close();
+                    	}
+                    }           
+                } catch (ClientProtocolException e) {
+                    // TODO Auto-generated catch block
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                } catch (Exception e) {
+                	System.out.println("Exception =  " + e);
+                }
+            }
+            catch (Exception e){
+            		System.out.println("Exception = " + e);
+            }
+                
+			return entity;
+        }
+        
+
+        protected void onPostExecute() {
+            // TODO: check this.exception 
+            // TODO: do something with the feed
+        }
+    }
+    
+    /* Called when the user clicks the Send button */
+    @SuppressLint("NewApi")
+	public void sendMessage(View view) {
+    	System.out.println("Reached send message");
+    	new RetreiveFeedTask().execute();
+    	/*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+    	StrictMode.setThreadPolicy(policy); 
+    	
+       HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("http://4cje.localtunnel.com/text");
+
+        try {
+            // Add your data
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            nameValuePairs.add(new BasicNameValuePair("text", "hello this is cool"));
+            nameValuePairs.add(new BasicNameValuePair("end_time", "1374883200000"));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            // Execute HTTP Post Request
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity entity = response.getEntity();
+
+            if (entity != null) {
+            	InputStream instream = entity.getContent();
+            	try {
+            		// do something useful
+            	} finally {
+            		instream.close();
+            	}
+            }           
+        } catch (ClientProtocolException e) {
+            // TODO Auto-generated catch block
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+        } catch (IllegalStateException e) {
+        	System.out.print ("yoyoyo");
+        } catch (Exception e) {
+        	System.out.println("Exception = " + e);
+        }
+        */
         // Do something in response to button
-    	/*Intent intent = new Intent(this, DisplayMessageActivity.class);
+    	/*
+    	Intent intent = new Intent(this, DisplayMessageActivity.class);
     	EditText editText = (EditText) findViewById(R.id.edit_message);
     	String message = editText.getText().toString();
     	intent.putExtra(EXTRA_MESSAGE, message);
     	startActivity(intent);
     	*/
-    	if (SpeechRecognizer.isRecognitionAvailable(getApplicationContext())){
+    	/*if (SpeechRecognizer.isRecognitionAvailable(getApplicationContext())){
     		Log.i("LOGGER", "Yes info avaialble");
     		SpeechRecognizer sr = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
     		sr.setRecognitionListener(new listener()); 
     		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);       
     		sr.startListening(intent);
     	}
+    	*/
     }
     
     class listener implements RecognitionListener          

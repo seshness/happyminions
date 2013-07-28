@@ -7,15 +7,14 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-
+	<uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.happyminions.MainActivity"
-            android:permission="android.permission.RECORD_AUDIO"
+            android:name="com.example.happyminions.MainActivity"           
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,5 +31,4 @@
             	android:value="com.example.happyminions.MainActivity" />
     	</activity>
     </application>
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
 </manifest>
