@@ -6,6 +6,7 @@ var recognizeSpeech = function () {
         recognition.continuous = true;
         console.log("so recognition object created");
         recognition.interimResults = true;
+	var final_transcript = "";
         recognition.onerror = function(err) {
             console.log(err);
         };
@@ -23,23 +24,21 @@ var recognizeSpeech = function () {
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-            final_transcript = capitalize(final_transcript);
             console.log(final_transcript);
-            console.log(interim_transcript);
+            //console.log(interim_transcript);
         };
         return recognition;
     }
     return null;
 };
 
-chrome.app.runtime.onLaunched.addListener(function() {
-    // chrome.app.window.create('window.html', {
-    //  'bounds': {
-    //      'width': 400,
-    //      'height': 500
-    //  }
-    // });
-    console.log("Dom content loaded");
-    var rec = recognizeSpeech();
-    rec.start();
-});
+
+if (document.createElement("input").webkitSpeech === undefined) {
+    console.log("Speech input is not supported in your browser.");
+}
+
+document.addEventListener("DOMContentLoaded", function (event) {
+	var rec = recognizeSpeech();
+	rec.start();
+    });
+    
