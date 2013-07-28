@@ -63,7 +63,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			  System.out.println("startTime  = " + start_time);
 			  System.out.println("endTime = " + endTime);
 				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost("http://43te.localtunnel.com/text");
+				HttpPost httppost = new HttpPost("http://4nma.localtunnel.com/text");
 				
 				try {
 					// Add your data
@@ -177,6 +177,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		public void onError(int error) {
 			Log.d(TAG, "error " + error);
+			
 		}
 
 		public void onResults(Bundle results) {
