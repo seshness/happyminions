@@ -1,9 +1,10 @@
 import sys
 import json
 import requests
+import secrets
 
 url = "http://access.alchemyapi.com/calls/text/TextGetTextSentiment"
-apikey = "1818e38ad414e1e96dcf99da248fc6f46c532f2f"
+apikey = secrets.apikey
 
 def makeRequest(text):
   values = {
@@ -20,6 +21,13 @@ sentiment = makeRequest(sys.argv[1])
 sentiment_type = sentiment['type']
 
 if sentiment_type == "neutral":
-  print (sentiment_type, 0.0)
+  sentiment_result = {
+    "sentiment_type" : sentiment_type,
+    "sentiment_score" : 0.0
+    }
 else:
-  print (sentiment_type, sentiment['score'])
+  sentiment_result = {
+    "sentiment_type" : sentiment_type,
+    "sentiment_score" : sentiment['score']
+    }
+print(sentiment_result)

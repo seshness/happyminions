@@ -4,11 +4,14 @@
  */
 
 var express = require('express'),
+    mongoose = require('mongoose'),
     routes = require('./routes'),
     user = require('./routes/user'),
     text = require('./routes/text'),
     http = require('http'),
     path = require('path');
+
+mongoose.connect('mongodb://localhost/happyminions');
 
 var app = express();
 
