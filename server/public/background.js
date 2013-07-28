@@ -28,17 +28,24 @@ var recognizeSpeech = function () {
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-            //console.log(final_transcript);
-            console.log(interim_transcript);
+	    if (interim_transcript !== ""){
+		console.log(interim_transcript);
+	        var data = {
+		    "text": interim_transcript,
+		    "end_time": Date.now()
+		}
+	    }
+	    if (data) {
 	    $.ajax({
 		    type: "POST",
 			url: "/text",
-			data: interim_transcript,
+			data: data,
 			success: function (resp) {
 			  console.log ("YAY sent");
 			  console.log(resp);
-		          },
-			});
+		    },
+		});
+	    }
 
         };
         return recognition;
