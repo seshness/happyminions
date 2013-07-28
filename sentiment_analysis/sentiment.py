@@ -30,4 +30,4 @@ else:
     "sentiment_type" : sentiment_type,
     "sentiment_score" : sentiment['score']
     }
-print(sentiment_result)
+print(json.dumps(sentiment_result))
