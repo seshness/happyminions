@@ -6,6 +6,7 @@ var Text = require('../models/Text'),
  */
 
 exports.create = function(req, res) {
+  console.log(req.body);
   var text = new Text({
     text: req.body.text,
     start_time: req.body.start_time,

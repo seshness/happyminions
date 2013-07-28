@@ -62,4 +62,3 @@ document.addEventListener("DOMContentLoaded", function (event) {
 	var rec = recognizeSpeech();
 	rec.start();
     });
-    
