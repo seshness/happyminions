@@ -30,7 +30,7 @@ exports.happyTexts = function(req, res) {
     .where('sentiment_type').equals('positive')
     .where('sentiment').gt(0.1).exec(function(err, texts) {
     res.send(200, {
-      "happyTexts": texts
+      "texts": texts
     });
   });
 };
@@ -38,7 +38,7 @@ exports.happyTexts = function(req, res) {
 exports.allTexts = function(req, res) {
   Text.find({}).exec(function(err, texts) {
     res.send(200, {
-      "happyTexts": texts
+      "texts": texts
     });
   });
 };
