@@ -3,7 +3,10 @@ var mongoose = require('mongoose'),
     request = require('request');
 
 var textSchema = new mongoose.Schema({
-  text: String,
+  text: {
+    type: String,
+    required: true
+  },
   start_time: Date,
   end_time: Date,
   sentiment: Number,
