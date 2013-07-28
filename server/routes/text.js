@@ -19,6 +19,7 @@ exports.create = function(req, res) {
       });
     } else {
       res.send(200, { "id": text.id });
+      text.fetchSentiment();
     }
   });
 };
