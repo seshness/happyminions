@@ -14,8 +14,9 @@ module.exports = function(audios) {
     return (new Date(a.start_time)).getTime() - (new Date(b.start_time)).getTime();
   });
   for (var i = connections.length - 1; i >= 0; i--) {
-    for (var j = 0; j <= audios.length - 1; j++) {
+    for (var j = 2; j <= 4; j++) {
       connections[i].send(audios[j].audio);
+      connections[i].send('EOF');
     }
   }
 };

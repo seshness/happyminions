@@ -30,36 +30,66 @@ $(function() {
     console.log('opened connection to websocket');
   };
 
-  var playbackQueue = [];
+  var counter = 0;
 
+  var playbackQueue = [], hasEnded = true;
+  window.playbackQueue = playbackQueue
+
+  var playNext = function() {
+    if (playbackQueue.length > 1) {
+      console.log('playing next audio file', Date.now())
+      playFromAudioBuffer(playbackQueue.shift()[1]);
+    }
+  };
   var playFromAudioBuffer = function(buffer) {
     var sourceNode = context.createBufferSource();
-    sourceNode.buffer = buffer;
-    sourceNode.connect(context.destination);
-    sourceNode.onended = function() {
-      if (playbackQueue.length > 1) {
-        console.log('playing next audio file')
-        playFromAudioBuffer(playbackQueue.unshift());
-      }
-    };
-    console.log('playing an audio file')
-    sourceNode.start(0);
+    // try {
+      sourceNode.buffer = buffer;
+      sourceNode.connect(context.destination);
+      sourceNode.onended = playNext;
+      console.log('playing an audio file', Date.now())
+      sourceNode.start(0);
+    // } catch (ex) {
+    //   console.warn(ex)
+    //   playNext();
+    // }
     return sourceNode;
   };
 
+  window.playFromAudioBuffer = playFromAudioBuffer
+
+  var appendBuffer = function(buffer1, buffer2) {
+    var tmp = new Uint8Array( buffer1.byteLength + buffer2.byteLength );
+    tmp.set( new Uint8Array( buffer1 ), 0 );
+    tmp.set( new Uint8Array( buffer2 ), buffer1.byteLength );
+    return tmp.buffer;
+  };
+
+  var decode = function(genericBuffer) {
+    context.decodeAudioData(genericBuffer, function(buffer) {
+      console.log('decoded arraybuffer', Date.now())
+      playbackQueue.push([counter++, buffer]);
+      if (playbackQueue.length === 1) {
+        console.log('first audio file going to play', Date.now());
+        playFromAudioBuffer(playbackQueue.shift()[1]);
+      }
+    }, function(error) {
+      console.warn('Audio decoding error', error, Date.now());
+    });
+  };
+
+  var file = [];
   // Play audio from websocket
   ws.onmessage = function(e) {
-    context.decodeAudioData(e.data, function(buffer) {
-      console.log('audio decoding success!')
-      playbackQueue.push(buffer)
-      playFromAudioBuffer(buffer);
-      // if (playbackQueue.length === 1) {
-      //   console.log('first audio file queueing')
-      //   playFromAudioBuffer(playbackQueue.unshift());
-      // }
-    }, function(error) {
-      console.warn('Audio decoding error', error)
-    });
+    if (typeof e.data === 'string' && e.data === 'EOF') {
+      console.log('EOF');
+      var completeWav = file.reduce(appendBuffer);
+      file.length = 0;
+      decode(completeWav);
+    } else {
+      console.log('WebSocket: Received arraybuffer data');
+      file.push(e.data);
+    }
   };
 
   // success callback when requesting audio input stream
