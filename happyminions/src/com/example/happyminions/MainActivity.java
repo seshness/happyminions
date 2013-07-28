@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class MainActivity extends Activity {
 
-	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+	public final static String EXTRA_MESSAGE = "com.example.happyminions.MESSAGE";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
