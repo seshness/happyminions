@@ -20,6 +20,13 @@ sentiment = makeRequest(sys.argv[1])
 sentiment_type = sentiment['type']
 
 if sentiment_type == "neutral":
-  print (sentiment_type, 0.0)
+  sentiment_result = {
+    "sentiment_type" : sentiment_type,
+    "sentiment_score" : 0.0
+    }
 else:
-  print (sentiment_type, sentiment['score'])
+  sentiment_result = {
+    "sentiment_type" : sentiment_type,
+    "sentiment_score" : sentiment['score']
+    }
+print(sentiment_result)
