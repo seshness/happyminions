@@ -1,4 +1,5 @@
-secrets.py*.py[cod]
+secrets.py
+*.py[cod]
 
 # C extensions
 *.so
