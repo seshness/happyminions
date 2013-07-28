@@ -1,7 +1,17 @@
-doctype 5
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+!!! 5
+html(lang='en')
+    head
+        title Happy Moments
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        link(href='css/bootstrap.min.css', rel='stylesheet', media='screen')
+        link(href='css/animate.min.css', rel='stylesheet', media='screen')
+        link(href='css/style.css', rel='stylesheet', media='screen')
+    body
+        header
+            h1 Your Daily Happiness Store
+        block content
+        script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
+        script(type='text/javascript', src='js/bootstrap.min.js')
+        script(type='text/javascript', src='js/d3.v3.min.js')
+        script(type='text/javascript', src='js/moment.min.js')
+        script(type='text/javascript', src='js/background.js')

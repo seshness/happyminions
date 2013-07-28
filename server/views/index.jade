@@ -1,5 +1,22 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    .container
+        .row
+            .col-lg-3.microphone.inactive
+            .col-lg-3.spoken-text-container.invisible
+                .spoken-text.triangle-border.left Anirudh is a derp
+            .col-lg-6.happy-area
+                button.fetchHappyMoments.btn.btn-primary.btn-large(type="button")
+                    | Happy Moments
+                table.table.table-hover.happyMoments.invisible
+                    thead
+                        tr
+                            th Time
+                            th What you said
+                    tbody
+
+    footer.bs-footer
+        p
+            a(href="http://thenounproject.com/noun/microphone/#icon-No171",target="_blank") Microphone
+            |  from The Noun Project
