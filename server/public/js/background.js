@@ -7,7 +7,7 @@ var recognizeSpeech = function () {
   var recognition = new webkitSpeechRecognition();
   recognition.continuous = true;
   console.log("so recognition object created");
-  recognition.interimResults = false;
+  recognition.interimResults = true;
 
   recognition.onerror = function(err) {
     $('.microphone')
@@ -42,6 +42,7 @@ var recognizeSpeech = function () {
         .addClass('animated fadeOutLeft');
     }, 5000);
   };
+  var start_time_filled = false;
   recognition.onresult = function(event) {
     $('.microphone')
       .removeClass('disabled')
@@ -50,14 +51,26 @@ var recognizeSpeech = function () {
     window.setTimeout(function() {
       $('.microphone').removeClass('animated tada');
     }, 750);
-    console.log("recognition called");
+    // console.log("recognition called");
     var transcript = '';
-
+    var end_time;
     for (var i = event.resultIndex; i < event.results.length; ++i) {
       if (event.results[i].isFinal) {
         transcript += event.results[i][0].transcript;
+	end_time = Date.now();
+	start_time_filled = false;
+	console.log("Transcript is " + transcript);
+	console.log ("Ends at " + end_time);
+	displayText(transcript);
       } else {
-        transcript += event.results[i][0].transcript;
+	  if (!start_time_filled) {
+	      var start_time = Date.now();
+	      start_time_filled = true;
+	      console.log("Starts at " + start_time);
+	  }
+	  transcript += event.results[i][0].transcript;
+	  displayText(transcript);
+	  return;
       }
     }
 
@@ -65,9 +78,9 @@ var recognizeSpeech = function () {
     if (transcript !== "") {
       data = {
         "text": transcript,
-        "end_time": Date.now()
+	"start_time": start_time,
+        "end_time": end_time
       };
-      displayText(transcript);
     }
     if (data) {
       $.ajax({
