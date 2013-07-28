@@ -1,4 +1,5 @@
-var Text = require('../models/Text');
+var Text = require('../models/Text'),
+    exec = require('child_process').exec;
 
 /**
  * POST text
@@ -12,7 +13,13 @@ exports.create = function(req, res) {
     sentiment: req.body.DEBUG === 'TRUE' ? req.body.sentiment : null
   });
   text.save(function(err, text) {
-    res.send(200, { "id": text.id });
+    if (err) {
+      res.send(500, {
+        "error": err
+      });
+    } else {
+      res.send(200, { "id": text.id });
+    }
   });
 };
 
