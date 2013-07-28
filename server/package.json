@@ -9,6 +9,9 @@
     "express": "3.3.4",
     "jade": "*",
     "mongoose": "*",
-    "request": "*"
+    "request": "*",
+    "socket.io": "*",
+    "ws": "*",
+    "binaryjs": "*"
   }
 }

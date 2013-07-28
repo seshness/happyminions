@@ -8,6 +8,7 @@ var express = require('express'),
     routes = require('./routes'),
     user = require('./routes/user'),
     text = require('./routes/text'),
+    audio = require('./routes/audio'),
     http = require('http'),
     path = require('path');
 
@@ -40,6 +41,14 @@ app.post('/text', text.create);
 app.get('/happytexts', text.happyTexts);
 app.get('/alltexts', text.allTexts);
 
-http.createServer(app).listen(app.get('port'), function(){
+app.post('/audio', audio.create);
+app.get('/playbetween', audio.playBetween);
+app.post('/save', audio.save);
+
+// require('./audio-receiver');
+
+var server = http.createServer(app);
+
+server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
