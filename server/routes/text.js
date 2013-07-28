@@ -15,6 +15,7 @@ exports.create = function(req, res) {
   });
   text.save(function(err, text) {
     if (err) {
+      console.error(err);
       res.send(500, {
         "error": err
       });
