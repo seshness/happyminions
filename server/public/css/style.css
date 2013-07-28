@@ -1,3 +1,7 @@
+body {
+    background: url("../img/happyminions-logo-small.png") no-repeat 95% 50px;
+}
+
 header {
     margin: 0 0 40px 30px;
 }
@@ -35,7 +39,7 @@ footer, .bs-footer {
 }
 
 .fetchHappyMoments {
-    margin: auto;
+    margin: 0 auto 30px auto;
 }
 
 .happyMoments td:first-child {
