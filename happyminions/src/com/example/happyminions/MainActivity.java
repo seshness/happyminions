@@ -48,12 +48,12 @@ public class MainActivity extends Activity implements OnClickListener {
 		return true;
 	}
 
-	class RetreiveFeedTask extends AsyncTask<String, Void, HttpEntity> {
+	class MakePostRequestTask extends AsyncTask<String, Void, HttpEntity> {
 
 		private Exception exception;
 		private HttpEntity entity = null;
 
-		protected HttpEntity doInBackground(String... urls) {
+		protected HttpEntity doInBackground(String... text) {
 			try {
 
 				HttpClient httpclient = new DefaultHttpClient();
@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				try {
 					// Add your data
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-					nameValuePairs.add(new BasicNameValuePair("text", "hello this is cool"));
+					nameValuePairs.add(new BasicNameValuePair("text", text[0]));
 					nameValuePairs.add(new BasicNameValuePair("end_time", "1374883200000"));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					System.out.println("Sets entity fine");
@@ -72,14 +72,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 					entity = response.getEntity();
 					System.out.println("Result got " + EntityUtils.toString(entity));
-					if (entity != null) {
-						InputStream instream = entity.getContent();
-						try {
-							// do something useful
-						} finally {
-							instream.close();
-						}
-					}
 				} catch (ClientProtocolException e) {
 					// TODO Auto-generated catch block
 				} catch (IOException e) {
@@ -103,7 +95,10 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void sendMessage(View view) {
 		System.out.println("Reached send message");
 
-		// Do something in response to button
+		// Executes post request
+		// new MakePostRequestTask().execute();
+		
+		// Do something in response to button   
 		if (SpeechRecognizer.isRecognitionAvailable(getApplicationContext())) {
 			Log.i("LOGGER", "Yes info avaialble");
 			sr = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
@@ -111,6 +106,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 			sr.startListening(intent);
 		}
+		
 	}
 
 	public void stopRecording(View v) {
@@ -133,11 +129,12 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		public void onEndOfSpeech() {
 			Log.d(TAG, "onEndofSpeech");
+			/*
 			SpeechRecognizer sr = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
 			sr.setRecognitionListener(new listener());
 			Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 			sr.startListening(intent);
-
+      */
 		}
 
 		public void onError(int error) {
@@ -145,18 +142,19 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 
 		public void onResults(Bundle results) {
+		  Log.d(TAG, "onResults");
 			String str = new String();
-			Log.d(TAG, "onResults  " + results);
+			System.out.println("onResults =  " + results);
 			ArrayList<String> data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 			float[] score = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
 			float max = -1;
 			for (int i = 0; i < data.size(); i++) {
-				// Log.d(TAG, "result " + data.get(i));
+				Log.d(TAG, "result " + data.get(i));
 				if (score[i] > max) {
 					str = data.get(i);
 					max = score[i];
 					Log.d(TAG, "result " + str);
-					new RetreiveFeedTask().execute();
+					new MakePostRequestTask().execute(str);
 				}
 
 			}
@@ -190,37 +188,6 @@ public class MainActivity extends Activity implements OnClickListener {
 			sr.startListening(intent);
 		}
 
-	}
-
-	public void postData(View view) {
-		// Create a new HttpClient and Post Header
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost("https://4cje.localtunnel.com/text");
-
-		try {
-			// Add your data
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("text", "hello this is cool"));
-			nameValuePairs.add(new BasicNameValuePair("end_time", "1374883200000"));
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			// Execute HTTP Post Request
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
-
-			if (entity != null) {
-				InputStream instream = entity.getContent();
-				try {
-					// do something useful
-				} finally {
-					instream.close();
-				}
-			}
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		}
 	}
 
 }
