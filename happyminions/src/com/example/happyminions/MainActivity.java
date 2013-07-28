@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class MainActivity extends Activity implements OnClickListener {
 
@@ -57,16 +58,19 @@ public class MainActivity extends Activity implements OnClickListener {
 			try {
 
 			  String textToPost = text[0];
+			  String start_time = text[1];
 			  String endTime = new Long(new Date().getTime()).toString();
+			  System.out.println("startTime  = " + start_time);
 			  System.out.println("endTime = " + endTime);
 				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httppost = new HttpPost("http://3rxn.localtunnel.com/text");
-				System.out.println("Http instantiation not a problem");
+				HttpPost httppost = new HttpPost("http://43te.localtunnel.com/text");
+				
 				try {
 					// Add your data
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 					nameValuePairs.add(new BasicNameValuePair("text", textToPost));
 					nameValuePairs.add(new BasicNameValuePair("end_time", endTime));
+					nameValuePairs.add(new BasicNameValuePair("start_time", start_time));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					System.out.println("Sets entity fine");
 
@@ -93,10 +97,12 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 	}
 
+	boolean send_clicked = false;
+	boolean alive = false;
 	/* Called when the user clicks the Send button */
-	@SuppressLint("NewApi")
+	@SuppressLint({ "NewApi", "ResourceAsColor" })
 	public void sendMessage(View view) {
-		System.out.println("Reached send message");
+	  System.out.println("Reached send message");
 
 		// Executes post request
 		// new MakePostRequestTask().execute();
@@ -107,7 +113,35 @@ public class MainActivity extends Activity implements OnClickListener {
 			sr = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
 			sr.setRecognitionListener(new listener());
 			Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+      intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM); 
+      intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, Long.valueOf(60000000));
+      intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, Long.valueOf(60000000));
+      intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, Long.valueOf(60000000));
 			sr.startListening(intent);
+			boolean first_time = true;
+			/*while(true){
+			  try {
+			    if (first_time) {
+			      Thread.sleep(25000);
+			      first_time = false;
+			    }
+			    else {
+			       Thread.sleep(5000);
+			    }
+			    System.out.println("5 seconds have passed");
+          if (!alive) {
+            System.out.println("Alive status = " + alive);
+            sr.setRecognitionListener(new listener());
+            sr.startListening(intent);
+          }
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+          
+        }
+			  
+			}*/
+			
 		}
 		
 	}
@@ -118,12 +152,16 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	class listener implements RecognitionListener {
+	  String start_time = "";
 		public void onReadyForSpeech(Bundle params) {
 			Log.d(TAG, "onReadyForSpeech");
 		}
 
 		public void onBeginningOfSpeech() {
 			Log.d(TAG, "onBeginningOfSpeech");
+			//alive = true;
+			Log.d(TAG, "onBeginningOfSpeech alive status = " + alive);
+			start_time = new Long(new Date().getTime()).toString();
 		}
 
 		public void onBufferReceived(byte[] buffer) {
@@ -132,12 +170,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		public void onEndOfSpeech() {
 			Log.d(TAG, "onEndofSpeech");
-			/*
-			SpeechRecognizer sr = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
-			sr.setRecognitionListener(new listener());
-			Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-			sr.startListening(intent);
-      */
+			alive = false;
+			Log.d(TAG, "onEndOfSpeech alive status = " + alive);
+	    
 		}
 
 		public void onError(int error) {
@@ -152,15 +187,14 @@ public class MainActivity extends Activity implements OnClickListener {
 			float[] score = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
 			float max = -1;
 			for (int i = 0; i < data.size(); i++) {
-				Log.d(TAG, "result " + data.get(i));
 				if (score[i] > max) {
 					str = data.get(i);
 					max = score[i];
-					Log.d(TAG, "result " + str);
-					new MakePostRequestTask().execute(str);
 				}
 
 			}
+			Log.d(TAG, "result " + str);
+      new MakePostRequestTask().execute(str, start_time);
 			max = -1;
 		}
 
@@ -182,15 +216,6 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View arg0) {
 		// TODO Auto-generated method stub
-
-		if (SpeechRecognizer.isRecognitionAvailable(getApplicationContext())) {
-			Log.i("LOGGER", "Yes info avaialble");
-			SpeechRecognizer sr = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
-			sr.setRecognitionListener(new listener());
-			Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-			sr.startListening(intent);
-		}
-
 	}
 
 }

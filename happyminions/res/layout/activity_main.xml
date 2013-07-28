@@ -1,31 +1,44 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:orientation="vertical" >
-
-    <EditText
-        android:id="@+id/edit_message"
+    android:orientation="horizontal" >
+    
+    <TextView
+        android:text="Let your minions find you happiness!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/edit_message" >
-
-        <requestFocus />
-    </EditText>
+        android:textSize="24dp"
+		android:layout_marginTop="40dp"
+        />
+        
 
     <Button
-        android:layout_width="115dp"
-        android:layout_height="62dp"
+        android:id="@+id/start"
+        android:layout_height="wrap_content"
         android:onClick="sendMessage"
-        android:text="Start Recording" />
+        android:background="@color/lime_green"
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="100dp"
+        android:layout_width="150dp"
+        android:text="Start Recording" 
+        android:bottomRightRadius="10dp"
+   		android:bottomLeftRadius="10dp"
+   		android:topLeftRadius="10dp"
+   		android:topRightRadius="10dp"
+        />
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="100dp"
+        android:layout_below="@id/start"
+        android:layout_width="150dp"
+        android:background="@color/lime_green"
         android:onClick="stopRecording"
+        android:visibility="invisible"
         android:text="Stop Recording" />
 
-</LinearLayout>
+</RelativeLayout>
