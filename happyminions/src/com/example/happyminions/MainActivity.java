@@ -1,8 +1,8 @@
 package com.example.happyminions;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -56,14 +56,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		protected HttpEntity doInBackground(String... text) {
 			try {
 
+			  String textToPost = text[0];
+			  String endTime = new Long(new Date().getTime()).toString();
+			  System.out.println("endTime = " + endTime);
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpPost httppost = new HttpPost("http://3rxn.localtunnel.com/text");
 				System.out.println("Http instantiation not a problem");
 				try {
 					// Add your data
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-					nameValuePairs.add(new BasicNameValuePair("text", text[0]));
-					nameValuePairs.add(new BasicNameValuePair("end_time", "1374883200000"));
+					nameValuePairs.add(new BasicNameValuePair("text", textToPost));
+					nameValuePairs.add(new BasicNameValuePair("end_time", endTime));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					System.out.println("Sets entity fine");
 
