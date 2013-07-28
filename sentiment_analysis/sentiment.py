@@ -1,3 +1,4 @@
+import sys
 import json
 import requests
 
@@ -15,7 +16,7 @@ def makeRequest(text):
   docSentiment = json_text['docSentiment']
   return docSentiment
 
-sentiment = makeRequest("hello you are the best")
+sentiment = makeRequest(sys.argv[1])
 sentiment_type = sentiment['type']
 
 if sentiment_type == "neutral":
