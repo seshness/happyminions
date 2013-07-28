@@ -5,7 +5,7 @@ var recognizeSpeech = function () {
         var recognition = new webkitSpeechRecognition();
         recognition.continuous = true;
         console.log("so recognition object created");
-        recognition.interimResults = true;
+        recognition.interimResults = false;
 	var final_transcript = "";
         recognition.onerror = function(err) {
             console.log(err);
@@ -13,38 +13,37 @@ var recognizeSpeech = function () {
         recognition.onstart = function() {
             console.log("recognition started")
         };
-	recognition.onend = function() {
+	recognition.onend = function(err) {
 	    console.log("Service ended");
-	    recognition.start();
+	    // recognition.start();
 	}
         recognition.onresult = function (event) {
             console.log("recognition called");
-            var interim_transcript = '';
+	    var transcript = '';
 
             for (var i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
-                    final_transcript += event.results[i][0].transcript;
+                    transcript += event.results[i][0].transcript;
                 } else {
-                    interim_transcript += event.results[i][0].transcript;
+                    transcript += event.results[i][0].transcript;
                 }
             }
-	    if (interim_transcript !== ""){
-		console.log(interim_transcript);
+	    if (transcript !== ""){
 	        var data = {
-		    "text": interim_transcript,
+		    "text": transcript,
 		    "end_time": Date.now()
 		}
 	    }
 	    if (data) {
-	    $.ajax({
-		    type: "POST",
+		$.ajax({
+			type: "POST",
 			url: "/text",
 			data: data,
 			success: function (resp) {
-			  console.log ("YAY sent");
-			  console.log(resp);
-		    },
-		});
+			    console.log ("YAY sent");
+			    console.log(resp);
+			},
+		    });
 	    }
 
         };
@@ -60,5 +59,6 @@ if (document.createElement("input").webkitSpeech === undefined) {
 
 document.addEventListener("DOMContentLoaded", function (event) {
 	var rec = recognizeSpeech();
+	console.log('trying to start...');
 	rec.start();
     });
