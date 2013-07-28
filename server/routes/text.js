@@ -10,7 +10,8 @@ exports.create = function(req, res) {
     text: req.body.text,
     start_time: req.body.start_time,
     end_time: req.body.end_time,
-    sentiment: req.body.DEBUG === 'TRUE' ? req.body.sentiment : null
+    sentiment: req.body.DEBUG === 'TRUE' ? req.body.sentiment : null,
+    sentiment_type: null
   });
   text.save(function(err, text) {
     if (err) {
@@ -25,7 +26,17 @@ exports.create = function(req, res) {
 };
 
 exports.happyTexts = function(req, res) {
-  Text.where('sentiment').gt(0.5).exec(function(err, texts) {
+  Text
+    .where('sentiment_type').equals('positive')
+    .where('sentiment').gt(0.1).exec(function(err, texts) {
+    res.send(200, {
+      "happyTexts": texts
+    });
+  });
+};
+
+exports.allTexts = function(req, res) {
+  Text.find({}).exec(function(err, texts) {
     res.send(200, {
       "happyTexts": texts
     });

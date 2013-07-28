@@ -38,6 +38,7 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 app.post('/text', text.create);
 app.get('/happytexts', text.happyTexts);
+app.get('/alltexts', text.allTexts);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
