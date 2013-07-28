@@ -13,6 +13,10 @@ var recognizeSpeech = function () {
         recognition.onstart = function() {
             console.log("recognition started")
         };
+	recognition.onend = function() {
+	    console.log("Service ended");
+	    recognition.start();
+	}
         recognition.onresult = function (event) {
             console.log("recognition called");
             var interim_transcript = '';
@@ -24,8 +28,8 @@ var recognizeSpeech = function () {
                     interim_transcript += event.results[i][0].transcript;
                 }
             }
-            console.log(final_transcript);
-            //console.log(interim_transcript);
+            //console.log(final_transcript);
+            console.log(interim_transcript);
         };
         return recognition;
     }
