@@ -36,7 +36,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+// app.get('/users', user.list);
 app.post('/text', text.create);
 app.get('/happytexts', text.happyTexts);
 app.get('/alltexts', text.allTexts);

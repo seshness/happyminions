@@ -42,7 +42,7 @@ var recognizeSpeech = function () {
         .addClass('animated fadeOutLeft');
     }, 5000);
   };
-  var start_time_filled = false;
+  var start_time = null;
   recognition.onresult = function(event) {
     $('.microphone')
       .removeClass('disabled')
@@ -57,20 +57,18 @@ var recognizeSpeech = function () {
     for (var i = event.resultIndex; i < event.results.length; ++i) {
       if (event.results[i].isFinal) {
         transcript += event.results[i][0].transcript;
-	end_time = Date.now();
-	start_time_filled = false;
-	console.log("Transcript is " + transcript);
-	console.log ("Ends at " + end_time);
-	displayText(transcript);
+        end_time = Date.now();
+        console.log("Transcript is " + transcript);
+        console.log ("Ends at " + end_time);
+        displayText(transcript);
       } else {
-	  if (!start_time_filled) {
-	      var start_time = Date.now();
-	      start_time_filled = true;
-	      console.log("Starts at " + start_time);
-	  }
-	  transcript += event.results[i][0].transcript;
-	  displayText(transcript);
-	  return;
+        if (!start_time) {
+          start_time = Date.now();
+          console.log("Starts at " + start_time);
+        }
+        transcript += event.results[i][0].transcript;
+        displayText(transcript);
+        return;
       }
     }
 
@@ -78,11 +76,13 @@ var recognizeSpeech = function () {
     if (transcript !== "") {
       data = {
         "text": transcript,
-	"start_time": start_time,
+        "start_time": start_time,
         "end_time": end_time
       };
+      start_time = null;
     }
     if (data) {
+      console.log(data);
       $.ajax({
         type: "POST",
         url: "/text",
@@ -117,30 +117,55 @@ $(function() {
         .classed('invisible', false)
         .select('tbody');
 
-      var row = tbody.selectAll('tr')
-        .data(happyMoments.texts.sort(function(a, b) {
-          return (new Date(b.end_time)).getTime() -
-            (new Date(a.end_time)).getTime();
-        }))
-        .enter()
-        .append('tr');
+      var sortedHappyMoments = happyMoments.texts.sort(function(a, b) {
+        return (new Date(a.end_time)).getTime() -
+        (new Date(b.end_time)).getTime();
+      });
 
-      row
-        .selectAll('td')
+      var rows = tbody.selectAll('tr')
+          .data(sortedHappyMoments, function(d) {
+            return (new Date(d.start_time)).getTime();
+          })
+          .sort(function(a, b) {
+            return (new Date(a.end_time)).getTime() -
+            (new Date(b.end_time)).getTime();
+          });
+
+      rows.enter().append('tr');
+      rows.exit().remove();
+
+      var cells = rows.selectAll('td')
         .data(function(row) {
           return ['end_time', 'text'].map(function(i) {
             return i === 'end_time' ? moment(row[i]).fromNow() : row[i];
           });
-        })
-        .enter()
-        .append('td')
-        .text(function(d) {
-          return d;
         });
 
-      row.exit().remove();
+      cells.enter()
+        .append('td')
+        .text(function(d) { return d; });
+      // cells.exit().remove();
 
+      rows.on('click', function(d) {
+        var success = function() {
+          d3.select(this).classed('success', true);
+          setTimeout(function() {
+            d3.select(this).classed('success', false);
+          }.bind(this), 5000);
+        }.bind(this);
+
+        $.ajax({
+          type: "GET",
+          url: "/playbetween",
+          data: {
+            start_time: (new Date(d.start_time)).getTime() - 5000,
+            end_time: (new Date(d.end_time)).getTime() + 5000
+          },
+          success: success
+        });
+      });
     };
+
     $.ajax({
       type: "GET",
       url: "happytexts",

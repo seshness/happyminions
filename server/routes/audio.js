@@ -30,13 +30,12 @@ exports.create = function(req, res) {
 
 exports.playBetween = function(req, res) {
   console.log(req.query)
-  console.log(parseInt(req.query.start_time, 10) - 500)
-  console.log(parseInt(req.query.end_time, 10) + 500)
   Audio //.find({})
-    .where('start_time').gt(parseInt(req.query.start_time, 10) - 500)
-    .where('end_time').lt(parseInt(req.query.end_time, 10) + 500)
+    .where('start_time').gt(parseInt(req.query.start_time, 10))
+    .where('end_time').lt(parseInt(req.query.end_time, 10))
     // .sort({start_time: 'asc'}) // DOESN'T WORK!!!
     .exec('find', function(err, audios) {
+      console.log(audios)
       sender(audios);
       res.send(200);
     });

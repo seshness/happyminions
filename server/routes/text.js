@@ -30,10 +30,14 @@ exports.create = function(req, res) {
 exports.happyTexts = function(req, res) {
   Text
     .where('sentiment_type').equals('positive')
-    .where('sentiment').gt(0.1).exec(function(err, texts) {
-    res.send(200, {
-      "texts": texts
-    });
+    .where('sentiment').gt(0.15).exec(function(err, texts) {
+      texts = texts.sort(function(a, b) {
+        return (new Date(b.start_time)).getTime() - (new Date(a.start_time)).getTime();
+      });
+      texts = texts.slice(0, 10);
+      res.send(200, {
+        "texts": texts
+      });
   });
 };
 

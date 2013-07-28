@@ -32,13 +32,16 @@ $(function() {
 
   var counter = 0;
 
-  var playbackQueue = [], hasEnded = true;
+  var playbackQueue = [], hasEnded = true, fileQueue = [];
   window.playbackQueue = playbackQueue
 
   var playNext = function() {
-    if (playbackQueue.length > 1) {
+    console.log('playNext!', Date.now())
+    if (playbackQueue.length >= 1) {
       console.log('playing next audio file', Date.now())
       playFromAudioBuffer(playbackQueue.shift()[1]);
+    } else {
+      hasEnded = true;
     }
   };
   var playFromAudioBuffer = function(buffer) {
@@ -46,7 +49,9 @@ $(function() {
     // try {
       sourceNode.buffer = buffer;
       sourceNode.connect(context.destination);
-      sourceNode.onended = playNext;
+      sourceNode.onended = playNext; // doesn't work? o.O :( ::( :(
+      console.log('buffer.duration', buffer.duration)
+      setTimeout(playNext, buffer.duration * 1100)
       console.log('playing an audio file', Date.now())
       sourceNode.start(0);
     // } catch (ex) {
@@ -69,7 +74,8 @@ $(function() {
     context.decodeAudioData(genericBuffer, function(buffer) {
       console.log('decoded arraybuffer', Date.now())
       playbackQueue.push([counter++, buffer]);
-      if (playbackQueue.length === 1) {
+      if (hasEnded) {
+        hasEnded = false;
         console.log('first audio file going to play', Date.now());
         playFromAudioBuffer(playbackQueue.shift()[1]);
       }
@@ -82,9 +88,9 @@ $(function() {
   // Play audio from websocket
   ws.onmessage = function(e) {
     if (typeof e.data === 'string' && e.data === 'EOF') {
-      console.log('EOF');
       var completeWav = file.reduce(appendBuffer);
       file.length = 0;
+      console.log('EOF');
       decode(completeWav);
     } else {
       console.log('WebSocket: Received arraybuffer data');
@@ -106,7 +112,7 @@ $(function() {
       recorder.exportWAV(function(blob) {
         recorder.clear();
         var data = {
-          start_time: Math.floor(Date.now() - 1250),
+          start_time: Math.floor(Date.now() - 5000),
           end_time: Math.ceil(Date.now())
         };
         blobToBase64_2(blob, function(base64) {
