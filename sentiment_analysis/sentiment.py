@@ -1,9 +1,10 @@
 import sys
 import json
 import requests
+import secrets
 
 url = "http://access.alchemyapi.com/calls/text/TextGetTextSentiment"
-apikey = "1818e38ad414e1e96dcf99da248fc6f46c532f2f"
+apikey = secrets.apikey
 
 def makeRequest(text):
   values = {
